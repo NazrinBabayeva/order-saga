@@ -1,0 +1,76 @@
+spring:
+  application:
+    name: order-orchestrator
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: 123456
+    hikari:
+      schema: order_orchestrator
+  profiles:
+    active:
+      - kafka
+
+#  liquibase:
+#    enabled: true
+#    change-log: classpath:/db/changelog/db.changelog-master.yaml
+#    default-schema: order_orchestrator
+#    database-change-log-table: SAGA_DBCHANGELOG
+#    database-change-log-lock-table: SAGA_DBCHANGELOGLOCK
+
+
+  redis: localhost
+
+  sleuth:
+    sampler:
+      probability: 1.0
+
+  zipkin:
+    base-url: http://localhost:9411/api/v2/spans
+    sender:
+      type: web
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+  data:
+    redis:
+      post: 6379
+
+resilience4j:
+  retry:
+    instances:
+      productService:
+        max-attempts: 3
+        wait-duration: 1s
+
+      paymentService:
+        max-attempts: 2
+        wait-duration: 2s
+
+  circuitbreaker:
+    instances:
+      productService:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 10s
+        sliding-window-size: 10
+
+      paymentService:
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 15s
+        sliding-window-size: 10
+
+  timelimiter:
+    instances:
+      productService:
+        timeout-duration: 3s
+      paymentService:
+        timeout-duration: 5s
+
+
+server:
+  port: 8087
+  servlet:
+    context-path: /saga-orchestrator-ms/api

@@ -2,18 +2,16 @@ spring:
   kafka:
     template:
       order-create-event-topic: ${ORDER_CREATE_ORDER_TOPIC:order-events}
+      order-create-event-group-id: ${ORDER_CREATE_ORDER_GROUP_ID:saga-orchestrator-group}
     consumer:
       group-id: saga-orchestrator-ms
       bootstrap-servers: localhost:9092
       auto-offset-reset: earliest
-
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-
       properties:
-        spring.json.trusted.packages: "com.example.orderorchestrator.event"
-        spring.json.value.default.type: com.example.orderorchestrator.event.OrderCreatedEvent
-        spring.json.use.type.headers: false
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: com.example.orderorchestrator.model.dto.OrderCreatedEvent
 
     producer:
       bootstrap-servers: localhost:9092

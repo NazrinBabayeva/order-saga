@@ -1,5 +1,6 @@
 package com.example.orderorchestrator.event;
 
+import com.example.orderorchestrator.model.dto.OrderCreatedEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -12,13 +13,14 @@ public class OrderEventProducer {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
 
-    private static final String TOPIC = "order-events";
+    private static final String TOPIC = "succeded-order-events";
 
     public void sendOrderCompletedEvent(Long orderId,
                                         Long productId,
                                         int quantity,
                                         BigDecimal price,
-                                        String email) {
+                                        String email,
+                                        Long userId) {
 
         OrderCreatedEvent event = new OrderCreatedEvent(
                 orderId,
@@ -26,7 +28,9 @@ public class OrderEventProducer {
                 quantity,
                 price,
                 email,
-                "COMPLETED"
+                "COMPLETED",
+                userId
+
         );
 
         kafkaTemplate.send(TOPIC, event);
@@ -36,7 +40,8 @@ public class OrderEventProducer {
                                      Long productId,
                                      int quantity,
                                      BigDecimal price,
-                                     String email) {
+                                     String email,
+                                     Long userId) {
 
         OrderCreatedEvent event = new OrderCreatedEvent(
                 orderId,
@@ -44,7 +49,8 @@ public class OrderEventProducer {
                 quantity,
                 price,
                 email,
-                "FAILED"
+                "FAILED",
+                userId
         );
     }
 }

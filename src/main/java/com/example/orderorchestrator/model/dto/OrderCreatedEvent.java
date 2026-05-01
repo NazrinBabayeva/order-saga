@@ -1,4 +1,4 @@
-package com.example.orderorchestrator.event;
+package com.example.orderorchestrator.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,6 +17,7 @@ public class OrderCreatedEvent {
     private BigDecimal price;
     private String email;
     private String status;
+    private Long userId;
 
 
 }

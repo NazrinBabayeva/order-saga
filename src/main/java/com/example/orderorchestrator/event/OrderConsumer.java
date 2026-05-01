@@ -1,6 +1,6 @@
 package com.example.orderorchestrator.event;
 
-import com.example.orderorchestrator.event.OrderCreatedEvent;
+import com.example.orderorchestrator.model.dto.OrderCreatedEvent;
 import com.example.orderorchestrator.model.dto.request.SagaRequest;
 import com.example.orderorchestrator.service.SagaService;
 import lombok.RequiredArgsConstructor;
@@ -11,19 +11,15 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class SagaEventConsumer {
+public class OrderConsumer {
 
     private final SagaService sagaService;
 
     @KafkaListener(
-            topics = "order-events",
-            groupId = "saga-orchestrator-group"
+            topics = "${spring.kafka.template.order-create-event-topic}",
+            groupId = "${spring.kafka.template.order-create-event-group-id}"
     )
     public void consume(OrderCreatedEvent event) {
-
-        if (!"CREATED".equals(event.getStatus())) {
-            return;
-        }
 
         log.info("Event is consumed with body={}", event);
         SagaRequest request = new SagaRequest();
@@ -32,6 +28,7 @@ public class SagaEventConsumer {
         request.setQuantity((long) event.getQuantity());
         request.setPrice(event.getPrice());
         request.setEmail(event.getEmail());
+        request.setCustomerId(event.getUserId());
 
         sagaService.startSaga(request);
     }

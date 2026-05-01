@@ -22,15 +22,12 @@ spring:
 
   redis: localhost
 
-  sleuth:
-    sampler:
-      probability: 1.0
+  logging:
+    level:
+      root: INFO
+      com.example.orderorchestrator: DEBUG
 
-  zipkin:
-    base-url: http://localhost:9411/api/v2/spans
-    sender:
-      type: web
-    enabled: true
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -65,9 +62,9 @@ resilience4j:
   timelimiter:
     instances:
       productService:
-        timeout-duration: 3s
+        timeout-duration: 30s
       paymentService:
-        timeout-duration: 5s
+        timeout-duration: 30s
 
 
 server:
